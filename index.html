@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Weather App Project JavaScript | CodingNepal</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="script.js" defer></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    video.bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    h1, .container {
+      position: relative;
+      z-index: 1;
+      color: white;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .weather-input, .weather-data {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .separator {
+      height: 1px;
+      background: #ccc;
+      margin: 15px 0;
+    }
+
+    .weather-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .card {
+      background-color: rgba(74, 164, 224, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      flex: 1 1 calc(20% - 10px);
+      min-width: 150px;
+      color: white;
+    }
+
+    h3, h6 {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+
+  <video autoplay muted loop class="bg-video">
+    <source src="istockphoto-181013019-640_adpp_is.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <h1>Weather Dashboard</h1>
+  <div class="container">
+    <div class="weather-input">
+      <h3>Enter a City Name</h3>
+      <input class="city-input" type="text" placeholder="E.g., New York, London, Tokyo">
+      <button class="search-btn">Search</button>
+      <div class="separator"></div>
+      <button class="location-btn">Use Current Location</button>
+    </div>
+
+    <div class="weather-data">
+      <div class="current-weather">
+        <div class="details">
+          <h2>_______ ( ______ )</h2>
+          <h6>Temperature: __°C</h6>
+          <h6>Wind: __ M/S</h6>
+          <h6>Humidity: __%</h6>
+        </div>
+      </div>
+
+      <div class="days-forecast">
+        <h2>5-Day Forecast</h2>
+        <ul class="weather-cards">
+          <li class="card">
+            <h3>( ______ )</h3>
+            <h6>Temp: __C</h6>
+            <h6>Wind: __ M/S</h6>
+            <h6>Humidity: __%</h6>
+          </li>
+          <li class="card">
+            <h3>( ______ )</h3>
+            <h6>Temp: __C</h6>
+            <h6>Wind: __ M/S</h6>
+            <h6>Humidity: __%</h6>
+          </li>
+          <li class="card">
+            <h3>( ______ )</h3>
+            <h6>Temp: __C</h6>
+            <h6>Wind: __ M/S</h6>
+            <h6>Humidity: __%</h6>
+          </li>
+          <li class="card">
+            <h3>( ______ )</h3>
+            <h6>Temp: __C</h6>
+            <h6>Wind: __ M/S</h6>
+            <h6>Humidity: __%</h6>
+          </li>
+          <li class="card">
+            <h3>( ______ )</h3>
+            <h6>Temp: __C</h6>
+            <h6>Wind: __ M/S</h6>
+            <h6>Humidity: __%</h6>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
