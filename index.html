@@ -1,105 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Weather App Project JavaScript | CodingNepal</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather App Project</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    html, body {
       height: 100%;
-      font-family: Arial, sans-serif;
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     video.bg-video {
       position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       object-fit: cover;
       z-index: -1;
+      filter: brightness(0.5);
     }
 
-    h1, .container {
-      position: relative;
-      z-index: 1;
-      color: white;
+    body {
+      background-color: #121212;
+      color: #fff;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    body.light-mode {
+      background-color: #E3F2FD;
+      color: #000;
+    }
+
+    body.light-mode video.bg-video {
+      filter: brightness(0.8);
     }
 
     h1 {
       text-align: center;
-      padding: 20px 0;
+      font-size: 2rem;
+      background-color: #5372F0;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    body.light-mode h1 {
+      background-color: #bbdefb;
+      color: #000;
     }
 
     .container {
       max-width: 900px;
       margin: auto;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
     }
 
     .weather-input, .weather-data {
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0,0,0,0.6);
       padding: 20px;
       border-radius: 10px;
-      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
 
-    input, button {
+    .weather-input h3 {
+      margin-bottom: 10px;
+    }
+
+    .weather-input input, .weather-input button {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .weather-input input {
+      border: 1px solid #ccc;
+    }
+
+    .search-btn {
+      background-color: #5372F0;
+      color: #fff;
+    }
+
+    .search-btn:hover {
+      background-color: #2c52ed;
+    }
+
+    .location-btn {
+      background-color: #6C757D;
+      color: white;
     }
 
     .separator {
       height: 1px;
-      background: #ccc;
-      margin: 15px 0;
+      background-color: #bbb;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .separator::before {
+      content: "OR";
+      position: absolute;
+      background: inherit;
+      padding: 0 10px;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .current-weather {
+      background-color: rgba(83, 114, 240, 0.8);
+      padding: 20px;
+      border-radius: 10px;
     }
 
     .weather-cards {
       display: flex;
-      flex-wrap: wrap;
       gap: 15px;
-      padding: 0;
-      list-style: none;
+      flex-wrap: wrap;
     }
 
     .card {
-      background-color: rgba(74, 164, 224, 0.1);
-      padding: 10px;
+      background-color: rgba(74, 164, 224, 0.3);
+      padding: 15px;
       border-radius: 8px;
       flex: 1 1 calc(20% - 10px);
       min-width: 150px;
-      color: white;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    h3, h6 {
-      margin: 5px 0;
+    .mode-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 10;
+      background: #5372F0;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #map {
+      height: 300px;
+      border-radius: 10px;
+    }
+
+    .card img, .details img {
+      width: 60px;
+      height: 60px;
+      display: block;
+      margin: 10px auto;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        flex: 1 1 calc(50% - 10px);
+      }
+    }
+
+    body.light-mode .weather-input,
+    body.light-mode .weather-data {
+      background-color: rgba(255,255,255,0.7);
+      color: black;
+    }
+
+    body.light-mode .card {
+      background-color: rgba(100, 149, 237, 0.3);
+      color: black;
     }
   </style>
 </head>
 <body>
-
-
   <video autoplay muted loop class="bg-video">
-    <source src="istockphoto-181013019-640_adpp_is.mp4" type="video/mp4">
-    Your browser does not support HTML5 video.
+    <source src="istockphoto-181013019-640_adpp_is.mp4" type="video/mp4" />
   </video>
 
+  <button class="mode-toggle" id="modeToggle">Light Mode</button>
   <h1>Weather Dashboard</h1>
+
   <div class="container">
     <div class="weather-input">
       <h3>Enter a City Name</h3>
-      <input class="city-input" type="text" placeholder="E.g., New York, London, Tokyo">
+      <input class="city-input" type="text" placeholder="E.g., New York, London, Tokyo" />
       <button class="search-btn">Search</button>
-      <div class="separator"></div>
-      <button class="location-btn">Use Current Location</button>
     </div>
 
     <div class="weather-data">
@@ -111,44 +213,116 @@
           <h6>Humidity: __%</h6>
         </div>
       </div>
-
       <div class="days-forecast">
         <h2>5-Day Forecast</h2>
-        <ul class="weather-cards">
-          <li class="card">
-            <h3>( ______ )</h3>
-            <h6>Temp: __C</h6>
-            <h6>Wind: __ M/S</h6>
-            <h6>Humidity: __%</h6>
-          </li>
-          <li class="card">
-            <h3>( ______ )</h3>
-            <h6>Temp: __C</h6>
-            <h6>Wind: __ M/S</h6>
-            <h6>Humidity: __%</h6>
-          </li>
-          <li class="card">
-            <h3>( ______ )</h3>
-            <h6>Temp: __C</h6>
-            <h6>Wind: __ M/S</h6>
-            <h6>Humidity: __%</h6>
-          </li>
-          <li class="card">
-            <h3>( ______ )</h3>
-            <h6>Temp: __C</h6>
-            <h6>Wind: __ M/S</h6>
-            <h6>Humidity: __%</h6>
-          </li>
-          <li class="card">
-            <h3>( ______ )</h3>
-            <h6>Temp: __C</h6>
-            <h6>Wind: __ M/S</h6>
-            <h6>Humidity: __%</h6>
-          </li>
-        </ul>
+        <ul class="weather-cards"></ul>
       </div>
     </div>
+
+    <div id="map"></div>
   </div>
 
+  <script>
+    const toggleBtn = document.getElementById('modeToggle');
+    const body = document.body;
+    const bgVideo = document.querySelector(".bg-video");
+
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+      toggleBtn.textContent = body.classList.contains('light-mode') ? "Dark Mode" : "Light Mode";
+    });
+
+    const apiKey = "4f862e7c4a2a5a4dcc7e4df830a2a73f";
+    const cityInput = document.querySelector(".city-input");
+    const searchBtn = document.querySelector(".search-btn");
+    const weatherDetails = document.querySelector(".current-weather .details");
+    const forecastCards = document.querySelector(".weather-cards");
+
+    async function getWeather(city) {
+      try {
+        const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+        const [weatherRes, forecastRes] = await Promise.all([
+          fetch(currentWeatherUrl),
+          fetch(forecastUrl)
+        ]);
+
+        if (!weatherRes.ok || !forecastRes.ok) {
+          alert("City not found!");
+          return;
+        }
+
+        const weatherData = await weatherRes.json();
+        const forecastData = await forecastRes.json();
+        const iconCode = weatherData.weather[0].icon;
+        const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+        weatherDetails.innerHTML = `
+          <h2>${weatherData.name} (${new Date().toLocaleDateString()})</h2>
+          <img src="${iconUrl}" alt="Weather Icon" />
+          <h6>Temperature: ${weatherData.main.temp}°C</h6>
+          <h6>Wind: ${weatherData.wind.speed} M/S</h6>
+          <h6>Humidity: ${weatherData.main.humidity}%</h6>
+        `;
+
+        forecastCards.innerHTML = "";
+        const forecasts = forecastData.list.filter(item => item.dt_txt.includes("12:00:00"));
+        forecasts.slice(0, 5).forEach(day => {
+          const date = new Date(day.dt_txt).toLocaleDateString();
+          const icon = day.weather[0].icon;
+          const iconUrl = `http://openweathermap.org/img/wn/${icon}@2x.png`;
+
+          const card = `
+            <li class="card">
+              <h3>${date}</h3>
+              <img src="${iconUrl}" alt="Weather Icon" />
+              <h6>Temp: ${day.main.temp}°C</h6>
+              <h6>Wind: ${day.wind.speed} M/S</h6>
+              <h6>Humidity: ${day.main.humidity}%</h6>
+            </li>
+          `;
+          forecastCards.insertAdjacentHTML("beforeend", card);
+        });
+
+        const unsplashUrl = `https://source.unsplash.com/1600x900/?${city}`;
+        const img = new Image();
+        img.onload = function () {
+          bgVideo.style.display = "none";
+          document.body.style.backgroundImage = `url('${unsplashUrl}')`;
+        };
+        img.onerror = function () {
+          console.warn("Could not load image for background");
+          document.body.style.backgroundImage = "";
+        };
+        img.src = unsplashUrl;
+
+        const lat = weatherData.coord.lat;
+        const lon = weatherData.coord.lon;
+        const map = L.map('map').setView([lat, lon], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lon]).addTo(map).bindPopup(`${weatherData.name}`).openPopup();
+
+      } catch (error) {
+        console.error("Error fetching weather:", error);
+        alert("Something went wrong!");
+      }
+    }
+
+    searchBtn.addEventListener("click", () => {
+      const city = cityInput.value.trim();
+      if (city !== "") {
+        getWeather(city);
+      }
+    });
+
+    cityInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        searchBtn.click();
+      }
+    });
+  </script>
 </body>
 </html>
